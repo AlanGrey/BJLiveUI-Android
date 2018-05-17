@@ -642,7 +642,7 @@ public class LiveRoomActivity extends LiveRoomBaseActivity implements LiveRoomRo
 
     @Override
     public boolean getVisibilityOfShareBtn() {
-        return shareListener != null;
+        return shareListener != null || cShareListener != null;
     }
 
     @Override
@@ -1603,17 +1603,19 @@ public class LiveRoomActivity extends LiveRoomBaseActivity implements LiveRoomRo
 
     @Override
     public void navigateToShare() {
-        if (shareListener.setShareList() == null) {
-            return;
+        if (shareListener != null && shareListener.setShareList() != null) {
+            LPShareDialog shareDialog = LPShareDialog.newInstance(shareListener.setShareList());
+            shareDialog.setListener(new LPShareDialog.LPShareClickListener() {
+                @Override
+                public void onShareClick(int type) {
+                    shareListener.onShareClicked(LiveRoomActivity.this, type);
+                }
+            });
+            showDialogFragment(shareDialog);
         }
-        LPShareDialog shareDialog = LPShareDialog.newInstance(shareListener.setShareList());
-        shareDialog.setListener(new LPShareDialog.LPShareClickListener() {
-            @Override
-            public void onShareClick(int type) {
-                shareListener.onShareClicked(LiveRoomActivity.this, type);
-            }
-        });
-        showDialogFragment(shareDialog);
+        if (cShareListener != null) {
+            cShareListener.onShareClicked(this);
+        }
     }
 
     @Override
@@ -1977,6 +1979,7 @@ public class LiveRoomActivity extends LiveRoomBaseActivity implements LiveRoomRo
 
     /* 房间外部回调 */
     private static LiveSDKWithUI.LPShareListener shareListener;
+    private static LiveSDKWithUI.CustomShareListener cShareListener;
     private static LiveSDKWithUI.LPRoomExitListener exitListener;
     private static LiveSDKWithUI.RoomEnterConflictListener enterRoomConflictListener;
     private static LiveSDKWithUI.LPRoomResumeListener roomLifeCycleListener;
@@ -1987,6 +1990,7 @@ public class LiveRoomActivity extends LiveRoomBaseActivity implements LiveRoomRo
 
     private void clearStaticCallback() {
         shareListener = null;
+        cShareListener = null;
         exitListener = null;
         enterRoomConflictListener = null;
         roomLifeCycleListener = null;
@@ -2002,6 +2006,10 @@ public class LiveRoomActivity extends LiveRoomBaseActivity implements LiveRoomRo
 
     public static void setShareListener(LiveSDKWithUI.LPShareListener listener) {
         LiveRoomActivity.shareListener = listener;
+    }
+
+    public static void setcShareListener(LiveSDKWithUI.CustomShareListener listener) {
+        LiveRoomActivity.cShareListener = listener;
     }
 
     public static void setRoomExitListener(LiveSDKWithUI.LPRoomExitListener roomExitListener) {

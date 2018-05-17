@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import com.baijiahulian.live.ui.activity.LiveRoomActivity;
 import com.baijiahulian.live.ui.utils.LPShareModel;
 import com.baijiahulian.livecore.context.LPConstants;
-import com.baijiahulian.livecore.context.LiveRoom;
 import com.baijiahulian.livecore.models.imodels.IUserModel;
 
 import java.util.ArrayList;
@@ -100,6 +99,10 @@ public class LiveSDKWithUI {
         LiveRoomActivity.setShareListener(listener);
     }
 
+    public static void setCustomShareListener(CustomShareListener listener) {
+        LiveRoomActivity.setcShareListener(listener);
+    }
+
     public static void setEnterRoomConflictListener(RoomEnterConflictListener listener) {
         LiveRoomActivity.setEnterRoomConflictListener(listener);
     }
@@ -119,11 +122,11 @@ public class LiveSDKWithUI {
     /**
      * 跑马灯字段
      */
-    public static void setLiveRoomMarqueeTape(String str){
+    public static void setLiveRoomMarqueeTape(String str) {
         LiveRoomActivity.setLiveRoomMarqueeTape(str);
     }
 
-    public static void setLiveRoomMarqueeTape(String str, int interval){
+    public static void setLiveRoomMarqueeTape(String str, int interval) {
         LiveRoomActivity.setLiveRoomMarqueeTape(str, interval);
     }
 
@@ -155,6 +158,10 @@ public class LiveSDKWithUI {
         ArrayList<? extends LPShareModel> setShareList();
 
         void getShareData(Context context, long roomId);
+    }
+
+    public interface CustomShareListener {
+        void onShareClicked(Context context);
     }
 
     public static class LiveRoomUserModel implements IUserModel {
